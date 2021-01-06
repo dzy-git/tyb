@@ -47,6 +47,12 @@ public class MybatisPlusConfig {
         return DruidDataSourceBuilder.create().build();
     }
 
+    @Bean(name = "datacenterDBDataSource")
+    @ConfigurationProperties(prefix = "datasource.datacenter")
+    public DataSource datacenterDB() {
+        return DruidDataSourceBuilder.create().build();
+    }
+
     /**
      * 动态数据源配置
      *
@@ -54,10 +60,12 @@ public class MybatisPlusConfig {
      */
     @Bean
     @Primary
-    public DataSource multipleDataSource(@Qualifier("defaultDBDataSource") DataSource defaultDBDataSource) {
+    public DataSource multipleDataSource(@Qualifier("defaultDBDataSource") DataSource defaultDBDataSource,
+                                         @Qualifier("datacenterDBDataSource") DataSource datacenterDBDataSource) {
         DynamicDataSource dynamicDataSource = new DynamicDataSource();
         Map<Object, Object> targetDataSources = new HashMap<>(4);
         targetDataSources.put(DBTypeEnum.DEFAULTDB.getType(), defaultDBDataSource);
+        targetDataSources.put(DBTypeEnum.DATACENTERDB.getType(), datacenterDBDataSource);
         dynamicDataSource.setTargetDataSources(targetDataSources);
         dynamicDataSource.setDefaultTargetDataSource(defaultDBDataSource);
         return dynamicDataSource;
@@ -66,7 +74,7 @@ public class MybatisPlusConfig {
     @Bean("sqlSessionFactory")
     public SqlSessionFactory sqlSessionFactory() throws Exception {
         MybatisSqlSessionFactoryBean sqlSessionFactory = new MybatisSqlSessionFactoryBean();
-        sqlSessionFactory.setDataSource(multipleDataSource(defaultDB()));
+        sqlSessionFactory.setDataSource(multipleDataSource(defaultDB(),datacenterDB()));
 
         MybatisConfiguration configuration = new MybatisConfiguration();
         configuration.setJdbcTypeForNull(JdbcType.NULL);
@@ -77,10 +85,11 @@ public class MybatisPlusConfig {
 
         List<Resource> resourceList = new ArrayList<>();
         resourceList.addAll(Arrays.asList(new PathMatchingResourcePatternResolver().getResources("classpath:/mapper/*.xml")));
+        resourceList.addAll(Arrays.asList(new PathMatchingResourcePatternResolver().getResources("classpath:/cmapper/*.xml")));
 //        resourceList.addAll(Arrays.asList(new PathMatchingResourcePatternResolver().getResources("classpath*:/mapper/*.xml")));
         Resource[] resources = resourceList.toArray(new Resource[0]);
         sqlSessionFactory.setMapperLocations(resources);
-        sqlSessionFactory.setTypeAliasesPackage("com.example.tyb.mapper.*");
+        sqlSessionFactory.setTypeAliasesPackage("com.example.tyb.mapper.*,com.example.tyb.cmapper.*");
 
         //PerformanceInterceptor(),OptimisticLockerInterceptor()
         //添加分页功能

@@ -276,7 +276,7 @@ public class SuperGenerator {
 
     protected AutoGenerator getDataCenterAutoGenerator(String tableName) {
         DBSetting dbSetting = readSetting("datacenter");
-        String mapperTag = "dcmapper";
+        String mapperTag = "cmapper";
         return new AutoGenerator()
                 // 全局配置
                 .setGlobalConfig(getGlobalConfig())

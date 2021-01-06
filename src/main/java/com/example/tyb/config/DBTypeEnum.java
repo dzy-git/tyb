@@ -9,6 +9,7 @@ import lombok.Getter;
  */
 public enum DBTypeEnum {
     DEFAULTDB("defalut", "主库默认库"),
+    DATACENTERDB("datacenter","从数据库"),
     TYBREPORTDB("tybreport", "统计库");
     @Getter
     private String type;

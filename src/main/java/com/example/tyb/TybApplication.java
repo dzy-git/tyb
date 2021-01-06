@@ -5,7 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-@MapperScan({"com.example.tyb.mapper"})
+@MapperScan({"com.example.tyb.mapper","com.example.tyb.cmapper"})
 public class TybApplication {
 
 	public static void main(String[] args) {

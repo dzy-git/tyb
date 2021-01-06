@@ -9,9 +9,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 class TybApplicationTests {
 
 	@Test
-	public void tybReportGenerator() {
+	public void defaultGenerator() {
 		MysqlGenerator generator = new MysqlGenerator();
 		generator.defaultGenerator("student_book");
+	}
+	@Test
+	public void dataCenterGenerator() {
+		MysqlGenerator generator = new MysqlGenerator();
+		generator.datacenterGenerator("index_book");
 	}
 
 }
